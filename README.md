@@ -23,6 +23,7 @@ docker compose up --build
 После запуска:
 - **GraphQL API**: http://localhost:4000
 - **GraphQL Playground**: http://localhost:4000/graphql
+- **Web Application**: http://localhost:3000
 - **PostgreSQL**: localhost:5432
 
 ### Локальная разработка Backend
@@ -43,6 +44,18 @@ npx prisma migrate dev
 npx prisma db seed
 
 # Запустите сервер
+npm run dev
+```
+
+### Локальная разработка Web
+
+```bash
+cd web
+
+# Установите зависимости
+npm install
+
+# Запустите dev сервер (убедитесь, что backend запущен)
 npm run dev
 ```
 

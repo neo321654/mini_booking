@@ -37,5 +37,18 @@ services:
       - ./backend/src:/app/src
       - ./backend/prisma:/app/prisma
 
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    container_name: booking_web
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    volumes:
+      - ./web/src:/app/src
+
 volumes:
   postgres_data:
