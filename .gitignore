@@ -1,0 +1,40 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.env.local
+.env.*.local
+
+# Flutter
+booking_flutter/.dart_tool/
+booking_flutter/.flutter-plugins
+booking_flutter/.flutter-plugins-dependencies
+booking_flutter/.packages
+booking_flutter/build/
+booking_flutter/.pub-cache/
+booking_flutter/.pub/
+booking_flutter/ios/Pods/
+booking_flutter/ios/.symlinks/
+booking_flutter/ios/Flutter/Flutter.framework
+booking_flutter/ios/Flutter/Flutter.podspec
+booking_flutter/.fvm/
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Docker
+*.log
+
+# Build outputs
+dist/
+*.js.map
+
+# OS
+Thumbs.db
+Desktop.ini

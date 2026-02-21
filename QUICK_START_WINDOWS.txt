@@ -1,0 +1,96 @@
+═══════════════════════════════════════════════════════════
+  MINI BOOKING SYSTEM - Быстрый старт для Windows
+═══════════════════════════════════════════════════════════
+
+📋 ЧТО НУЖНО УСТАНОВИТЬ:
+
+1. Git
+   https://git-scm.com/download/win
+
+2. Docker Desktop for Windows
+   https://www.docker.com/products/docker-desktop/
+   ⚠️ ВАЖНО: Запустите Docker Desktop перед работой!
+
+3. Flutter SDK
+   https://docs.flutter.dev/get-started/install/windows
+   - Распакуйте в C:\src\flutter
+   - Добавьте в PATH: C:\src\flutter\bin
+
+4. Visual Studio 2022 Community (для Flutter Windows)
+   https://visualstudio.microsoft.com/downloads/
+   - При установке выберите: "Desktop development with C++"
+
+═══════════════════════════════════════════════════════════
+
+🚀 КАК ЗАПУСТИТЬ:
+
+1. Клонируйте репозиторий:
+   
+   git clone <URL_РЕПОЗИТОРИЯ>
+   cd mini_booking
+
+2. Запустите Docker Desktop (если еще не запущен)
+
+3. Запустите backend и web:
+   
+   docker compose up --build
+   
+   Подождите пока все запустится (1-2 минуты)
+
+4. Откройте в браузере:
+   
+   http://localhost:4000/graphql  (GraphQL API)
+   http://localhost:3000          (Web приложение)
+
+5. Для Flutter Windows (в новом терминале):
+   
+   cd booking_flutter
+   flutter pub get
+   flutter run -d windows
+
+═══════════════════════════════════════════════════════════
+
+✅ ЧТО ДОЛЖНО РАБОТАТЬ:
+
+□ GraphQL Playground открывается (localhost:4000/graphql)
+□ Web приложение открывается (localhost:3000)
+□ Flutter Windows приложение запускается
+□ Можно создавать и отменять брони
+
+═══════════════════════════════════════════════════════════
+
+❌ ЕСЛИ ЧТО-ТО НЕ РАБОТАЕТ:
+
+Проблема: Docker не запускается
+Решение: Убедитесь что Docker Desktop запущен
+
+Проблема: Порт 4000 занят
+Решение: 
+  netstat -ano | findstr :4000
+  taskkill /PID <PID> /F
+
+Проблема: Flutter не компилируется
+Решение:
+  flutter doctor -v
+  (следуйте инструкциям flutter doctor)
+
+═══════════════════════════════════════════════════════════
+
+📚 ПОДРОБНАЯ ДОКУМЕНТАЦИЯ:
+
+Откройте файл WINDOWS_SETUP.md в репозитории
+Там есть полная инструкция со всеми деталями
+
+═══════════════════════════════════════════════════════════
+
+💬 ЕСЛИ НУЖНА ПОМОЩЬ:
+
+1. Проверьте логи:
+   docker compose logs
+
+2. Проверьте Flutter:
+   flutter doctor -v
+
+3. Напишите мне с описанием проблемы и скриншотом
+
+═══════════════════════════════════════════════════════════
