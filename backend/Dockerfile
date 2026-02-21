@@ -12,8 +12,8 @@ RUN npm ci
 # Копируем исходники
 COPY . .
 
-# Генерируем Prisma Client
-RUN npx prisma generate
+# Генерируем Prisma Client (используем placeholder для DATABASE_URL)
+RUN DATABASE_URL="postgresql://placeholder:placeholder@localhost:5432/placeholder" npx prisma generate
 
 # Expose порт
 EXPOSE 4000
