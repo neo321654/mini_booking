@@ -139,6 +139,5 @@ flutter clean && flutter pub get
 
 **Больше решений:** [WINDOWS_SETUP.md](WINDOWS_SETUP.md#troubleshooting)
 
-## 📄 Лицензия
-
-MIT
+**Лучшие приложения в мире, разработанные мной )**
+https://apps.apple.com/us/developer/kseniya-demidova/id1595082340
