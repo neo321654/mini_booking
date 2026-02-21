@@ -1,7 +1,19 @@
 import { ApolloServer, gql } from "apollo-server";
 import { PrismaClient } from "@prisma/client";
+import pino from "pino";
 
 const prisma = new PrismaClient();
+const logger = pino({
+  level: process.env.LOG_LEVEL || "info",
+  transport: {
+    target: "pino-pretty",
+    options: {
+      colorize: true,
+      translateTime: "SYS:standard",
+      ignore: "pid,hostname",
+    },
+  },
+});
 
 const typeDefs = gql`
   type Hotel {
@@ -59,8 +71,19 @@ Mutation: {
   checkAvailability: async (_: any, { roomId, startDate, endDate }: any) => {
     const start = new Date(startDate);
     const end = new Date(endDate);
+    const now = new Date();
 
-    if (start >= end) throw new Error("Invalid date range");
+    logger.info({ roomId, startDate, endDate }, "Checking availability");
+
+    if (start >= end) {
+      logger.error({ startDate, endDate }, "Invalid date range: start >= end");
+      throw new Error("Invalid date range: start date must be before end date");
+    }
+
+    if (start < now) {
+      logger.error({ startDate }, "Invalid date: booking in the past");
+      throw new Error("Cannot book dates in the past");
+    }
 
     const conflict = await prisma.booking.findFirst({
       where: {
@@ -72,53 +95,126 @@ Mutation: {
       },
     });
 
-    return !conflict;
+    const available = !conflict;
+    logger.info(
+      { roomId, startDate, endDate, available, conflictId: conflict?.id },
+      "Availability check completed"
+    );
+
+    return available;
   },
 
   createBooking: async (_: any, { roomId, startDate, endDate }: any) => {
     const start = new Date(startDate);
     const end = new Date(endDate);
+    const now = new Date();
 
-    if (start >= end) throw new Error("Invalid date range");
+    logger.info({ roomId, startDate, endDate }, "Attempting to create booking");
 
-    return prisma.$transaction(async (tx) => {
-      // проверяем пересечение ВНУТРИ транзакции
-      const conflict = await tx.booking.findFirst({
-        where: {
-          roomId,
-          AND: [
-            { startDate: { lt: end } },
-            { endDate: { gt: start } },
-          ],
-        },
+    if (start >= end) {
+      logger.error({ startDate, endDate }, "Invalid date range: start >= end");
+      throw new Error("Invalid date range: start date must be before end date");
+    }
+
+    if (start < now) {
+      logger.error({ startDate }, "Invalid date: booking in the past");
+      throw new Error("Cannot book dates in the past");
+    }
+
+    try {
+      const booking = await prisma.$transaction(async (tx) => {
+        // Проверяем существование комнаты
+        const room = await tx.room.findUnique({
+          where: { id: roomId },
+        });
+
+        if (!room) {
+          logger.error({ roomId }, "Room not found");
+          throw new Error("Room not found");
+        }
+
+        // проверяем пересечение ВНУТРИ транзакции
+        const conflict = await tx.booking.findFirst({
+          where: {
+            roomId,
+            AND: [
+              { startDate: { lt: end } },
+              { endDate: { gt: start } },
+            ],
+          },
+        });
+
+        if (conflict) {
+          logger.warn(
+            { roomId, startDate, endDate, conflictId: conflict.id },
+            "Booking conflict detected"
+          );
+          throw new Error("Room already booked for these dates");
+        }
+
+        // создаём бронь
+        return tx.booking.create({
+          data: {
+            roomId,
+            startDate: start,
+            endDate: end,
+          },
+        });
       });
 
-      if (conflict) {
-        throw new Error("Room already booked for these dates");
-      }
+      logger.info(
+        { bookingId: booking.id, roomId, startDate, endDate },
+        "Booking created successfully"
+      );
 
-      // создаём бронь
-      return tx.booking.create({
-        data: {
-          roomId,
-          startDate: start,
-          endDate: end,
-        },
-      });
-    });
+      return booking;
+    } catch (error) {
+      logger.error({ error, roomId, startDate, endDate }, "Failed to create booking");
+      throw error;
+    }
   },
 
   cancelBooking: async (_: any, { bookingId }: any) => {
-    await prisma.booking.delete({
-      where: { id: bookingId },
-    });
-    return true;
+    logger.info({ bookingId }, "Attempting to cancel booking");
+
+    try {
+      const booking = await prisma.booking.findUnique({
+        where: { id: bookingId },
+      });
+
+      if (!booking) {
+        logger.error({ bookingId }, "Booking not found");
+        throw new Error("Booking not found");
+      }
+
+      await prisma.booking.delete({
+        where: { id: bookingId },
+      });
+
+      logger.info(
+        { bookingId, roomId: booking.roomId },
+        "Booking cancelled successfully"
+      );
+
+      return true;
+    } catch (error) {
+      logger.error({ error, bookingId }, "Failed to cancel booking");
+      throw error;
+    }
   },
 },
 };
 
-const server = new ApolloServer({ typeDefs, resolvers ,introspection: true,});
+const server = new ApolloServer({ 
+  typeDefs, 
+  resolvers,
+  introspection: true,
+  formatError: (error) => {
+    logger.error({ error: error.message, path: error.path }, "GraphQL Error");
+    return error;
+  },
+});
 
 server.listen().then(({ url }) => {
-  console.log(`🚀 Server ready at ${url}`);
+  logger.info({ url }, "🚀 Server ready");
 });
