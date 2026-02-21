@@ -68,11 +68,17 @@ docker compose up --build
 # 4. Запустите Flutter (в новом терминале)
 cd booking_flutter
 flutter pub get
-flutter run  # для iOS/Android
-# или
-flutter run -d macos  # для macOS desktop
-# или
-flutter run -d windows  # для Windows desktop (на Windows)
+
+# Для macOS desktop:
+flutter run -d macos
+
+# Для iOS:
+open -a Simulator
+flutter run
+
+# Для Android:
+flutter run
+```
 ```
 
 ### Запуск на Windows:
