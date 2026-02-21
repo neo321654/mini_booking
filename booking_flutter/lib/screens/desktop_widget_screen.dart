@@ -4,9 +4,9 @@ import 'package:intl/intl.dart';
 import '../models/hotel.dart';
 import '../services/graphql_service.dart';
 
-// Windows Desktop виджет - легкое приложение для мониторинга
-class WindowsWidgetScreen extends StatelessWidget {
-  const WindowsWidgetScreen({super.key});
+// Desktop виджет для Windows и macOS - легкое приложение для мониторинга
+class DesktopWidgetScreen extends StatelessWidget {
+  const DesktopWidgetScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

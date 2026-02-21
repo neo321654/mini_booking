@@ -36,7 +36,7 @@
 - Pull-to-refresh
 - Автообновление данных
 
-### ✅ Flutter Windows Desktop
+### ✅ Flutter Desktop (Windows/macOS)
 - Компактный виджет мониторинга
 - Статистика по отелям (всего/свободно/занято)
 - Статус каждого номера
@@ -70,7 +70,9 @@ cd booking_flutter
 flutter pub get
 flutter run  # для iOS/Android
 # или
-flutter run -d windows  # для Windows desktop
+flutter run -d macos  # для macOS desktop
+# или
+flutter run -d windows  # для Windows desktop (на Windows)
 ```
 
 ### Запуск на Windows:

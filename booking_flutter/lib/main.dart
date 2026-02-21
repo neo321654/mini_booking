@@ -3,7 +3,7 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'dart:io' show Platform;
 import 'services/graphql_service.dart';
 import 'screens/hotels_screen.dart';
-import 'screens/windows_widget_screen.dart';
+import 'screens/desktop_widget_screen.dart';
 
 void main() async {
   // Инициализация Hive для кеширования GraphQL
@@ -21,10 +21,10 @@ class MyApp extends StatelessWidget {
     final client = GraphQLService.getClient();
 
     // Определяем начальный экран в зависимости от платформы
-    // Windows - показываем виджет мониторинга
+    // Windows/macOS - показываем виджет мониторинга
     // iOS/Android - показываем полное приложение
-    final homeScreen = Platform.isWindows
-        ? const WindowsWidgetScreen()
+    final homeScreen = (Platform.isWindows || Platform.isMacOS)
+        ? const DesktopWidgetScreen()
         : const HotelsScreen();
 
     return GraphQLProvider(
